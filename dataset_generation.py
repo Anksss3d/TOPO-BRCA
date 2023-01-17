@@ -68,6 +68,8 @@ def generate_tiles(
     validation_dataset = []
     check_structure(INPUT_DIR, TILE_DIR, CLASS_TO_INDEX.keys())
 
+    num_features = 0
+
     for clas in CLASS_TO_INDEX.keys():
         im_num = 0
         files = glob.glob1(f'{INPUT_DIR}{clas}/', "*."+image_format)
@@ -103,7 +105,7 @@ def generate_tiles(
                         #
                         features = features + generate_lbp_features_grayscale(im)
                         # features = features + generate_lbp_features(cv2.cvtColor(im, cv2.COLOR_BGR2HSV))
-
+                        num_features = len(features)
                         if random_index in lst:
                             tile_name = f"{v}_{white_content}.jpg"
                             cv2.imwrite(f"{TILE_DIR}validation/{clas}/{tile_name}", im)
@@ -132,10 +134,10 @@ def generate_tiles(
 
         print(f"\nTiles generated for class: {clas} = {im_num}, train: {t}, val: {v}")
 
-    with open(f'{TILE_DIR}train/data_2800.csv', 'w', encoding='UTF8', newline='') as f:
+    with open(f'{TILE_DIR}train/data_{num_features}.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(train_dataset)
-    with open(f'{TILE_DIR}validation/data_2800.csv', 'w', encoding='UTF8', newline='') as f:
+    with open(f'{TILE_DIR}validation/data_{num_features}.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerows(validation_dataset)
 
@@ -143,16 +145,14 @@ def generate_tiles(
 # Sample Function call for tile generation
 #
 # generate_tiles(
-#     INPUT_DIR=r"D://All Datasets/SICAPv2/dataset/",
-#     TILE_DIR=r"D://All Datasets/SICAPv2/all_tiles_all_features_256x256/",
+#     INPUT_DIR=r"/Users/anksss3d/datasets/inbreast2/dataset/",
+#     TILE_DIR=r"/Users/anksss3d/datasets/inbreast2/all_tiles_all_features_256x256/",
 #     CLASS_TO_INDEX={
-#         "NC": 0,
-#         "G3": 1,
-#         "G4": 2,
-#         "G5": 3,
+#         "normal": 0,
+#         "mass": 1,
 #     },
-#     INPUT_WIDTH=512,
-#     INPUT_HEIGHT=512,
+#     INPUT_WIDTH=2560,
+#     INPUT_HEIGHT=3328,
 #     TILE_SIZE=256,
 #     STEP_WIDTH=256,
 #     STEP_HEIGHT=256,

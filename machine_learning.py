@@ -25,15 +25,16 @@ def generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=None, cl
     df_test = pd.DataFrame(pd.read_csv(TEST_DIR, header=None))
     print(f"Original Train Shape: {df_train.shape}")
     print(f"Original Test Shape: {df_test.shape}")
-    if classes:
-        df_train = df_train.loc[df_train.iloc[:, -1].isin(classes)]
-        df_train = df_train.replace(classes, list(range(len(classes))))
-        df_test = df_test.loc[df_test.iloc[:, -1].isin(classes)]
-        df_test = df_test.replace(classes, list(range(len(classes))))
+    # if classes:
+    #     df_train = df_train.loc[df_train.iloc[:, -1].isin(classes)]
+    #     df_train = df_train.replace(classes, list(range(len(classes))))
+    #     df_test = df_test.loc[df_test.iloc[:, -1].isin(classes)]
+    #     df_test = df_test.replace(classes, list(range(len(classes))))
     if test_split:
         df = pd.concat([df_train, df_test], axis=0)
         x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(df.iloc[:, features_range], df.iloc[:, -1], test_size=test_split, random_state=42)
     else:
+        print("Coming here...")
         x_train, y_train = df_train.iloc[:, features_range], df_train.iloc[:, -1]
         x_test, y_test = df_test.iloc[:, features_range], df_test.iloc[:, -1]
     print(f"New Train Shape: {x_train.shape}")
@@ -182,15 +183,16 @@ def finetune_xgboost(TRAIN_DIR, TEST_DIR, features_range, FILE_NAME="finetuning.
     :param DS_NAME: Dataset Name
     :return: None
     '''
-    x_train, y_train, x_test, y_test = generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=0.2, classes=classes)
+    x_train, y_train, x_test, y_test = generate_train_test(TRAIN_DIR, TEST_DIR, features_range, classes=classes)
+    print("x_train shape", x_train.shape)
     accuracies = get_accuracies(FILE_NAME)
     parameters = {
-        "max_depth": list(range(4, 10)),
-        "learning_rate": [0.25, 0.3, 0.333, 0.366, 0.4, 0.45, 0.5],
-        "subsample": [1.0, 0.75, 0.5],
-        "colsample_bytree": [1.0, 0.75, 0.5],
-        "colsample_bylevel": [1.0, 0.75, 0.5],
-        "n_estimators": [100, 200, 300]
+        "max_depth": list(range(7, 10)),
+        "learning_rate": [0.333],
+        "subsample": [1.0],
+        "colsample_bytree": [1.0],
+        "colsample_bylevel": [1.0],
+        "n_estimators": [100, 200, 300, 500, 750, 1000, 1500, 2000]
     }
     keys = sorted(parameters.keys())
     params = {
@@ -308,12 +310,21 @@ def generate_best_k_features_dataset(TRAIN_DIR, TEST_DIR, features_range, OUTPUT
     train_df.to_csv(OUTPUT_TRAIN_DIR)
     test_df.to_csv(OUTPUT_TEST_DIR)
 
-# features_ranges = [
-#     list(range(1, 101)),
-#     list(range(101, 201)),
-#     list(range(1, 201)),
-#     list(range(1, 351)),
-# ]
+features_ranges = [
+    list(range(1, 101)),
+    list(range(101, 201)),
+    # list(range(1, 201)),
+    # list(range(1, 351)),
+]
+dirs = [
+    "MASS",
+    "CALC",
+]
+
+dirs2 = [
+    "CC",
+    "MLO"
+]
 # classes = [
 #     None,
 #     [0, 1],
@@ -346,10 +357,13 @@ def generate_best_k_features_dataset(TRAIN_DIR, TEST_DIR, features_range, OUTPUT
 
 
 finetune_xgboost(
-        TRAIN_DIR=r"D://Nisha/dataset1_all_data_350_features_224x224/train/data_2800.csv",
-        TEST_DIR=r"D://Nisha/dataset1_all_data_350_features_224x224/validation/data_2800.csv",
+        TRAIN_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/CC_200_features/train/data_2800.csv",
+        TEST_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/CC_200_features/validation/data_2800.csv",
         features_range=list(range(1, 201)),
-        FILE_NAME=r"D://Nisha/dataset1_all_data_350_features_224x224/finetune2.csv",
-        classes=None
+        FILE_NAME=r"/Users/anksss3d/datasets/breast-cesm/CALC/CC_200_features/finetune.csv",
+        classes={
+            "benign": 0,
+            "malignant": 1,
+        },
 )
 # print(a)

@@ -168,15 +168,95 @@ def plot_curve(FILE_PATH, class_names, confidence=40, curve=CURVE_RGB):
     fig.tight_layout()
     plt.show()
 
+def plot_single_curve(data_dir, features_range, class_names, confidence, classes_to_include = None, file_name = None):
+    df = pd.DataFrame(pd.read_csv(data_dir+"data_2800.csv", header=None))
+    last_ind = df.shape[1]-1
+    df = df.iloc[:, features_range+[last_ind]]
+    df.columns = [i for i in range(101)]
+
+    X = [i for i in range(100)]
+    colors = ["green", "red", "blue", "black"]
+
+    for i in classes_to_include:
+        class_data = df[df.iloc[:, -1] == i]
+        # print(class_data.columns)
+        n = len(class_data)
+        cnf = int((confidence / 200) * n)
+        median = []
+        lower = []
+        upper = []
+        for p in range(class_data.shape[1]-1):
+            values = sorted(class_data.iloc[:, p])
+            # print(p, len(values))
+            median.append(values[n // 2])
+            lower.append(values[n // 2 - cnf])
+            upper.append(values[n // 2 + cnf])
+
+        plt.plot(X, median, color=colors[i], linewidth=3, label=class_names[i])
+        plt.fill_between(X, lower, upper, color=colors[i], alpha=0.1)
+    plt.legend()
+    plt.tight_layout()
+
+    if file_name:
+        plt.savefig(data_dir+file_name)
+    else:
+        plt.show()
+    plt.clf()
+
+
+Bettis = {
+    "Betti-0": list(range(1, 101)),
+    "Betti-1": list(range(101, 201)),
+}
+cls = {
+    "3-Class": [0, 1, 2],
+    "B vs M": [0, 1],
+    "M vs N": [1, 2],
+    "B vs N": [0, 2],
+}
+dirs = [
+    "MASS",
+    "CALC",
+]
+
+dirs2 = [
+    "CC",
+    "MLO"
+]
+
+# for betti_name, betti_value in Bettis.items():
+#     for dir1 in dirs:
+#         for dir2 in dirs2:
+#             file_name = f"{betti_name} Curve for {dir1}, {dir2}.jpg"
+#             plot_single_curve(
+#                 data_dir=f"/Users/anksss3d/datasets/breast-cesm/{dir1}/{dir2}_200_features/train/",
+#                 features_range=betti_value,
+#                 class_names=[
+#                     "Benign",
+#                     "Malignant",
+#                 ],
+#                 classes_to_include=[0, 1],
+#                 confidence=40,
+#                 file_name = file_name
+#             )
+
 # Example Call to the betti curve plot function
-# plot_curve(
-#     r"/Users/anksss3d/datasets/SICAPv2/all_tiles_all_features_256x256/train/data_2800.csv",
-#     class_names = [
-#             "NC",
-#             "G3",
-#             "G4",
-#             "G5",
-#         ],
-#     confidence=40,
-#     curve=CURVE_HSV,
-# )
+classes = {
+    "All": [0, 1, 2],
+    "N vs B": [0, 1],
+    "B vs M": [1, 2],
+    "N vs M": [0, 2],
+}
+for name, cls in classes.items():
+    plot_single_curve(
+        data_dir=r"/Users/anksss3d/datasets/ultrasound/",
+        features_range=list(range(101, 201)),
+        class_names=[
+            "Normal",
+            "Benign",
+            "Malignant"
+        ],
+        classes_to_include=cls,
+        confidence=40,
+        file_name = f"Betti 1 Curve for Ultrasound ({name}).jpg"
+    )
