@@ -187,12 +187,12 @@ def finetune_xgboost(TRAIN_DIR, TEST_DIR, features_range, FILE_NAME="finetuning.
     print("x_train shape", x_train.shape)
     accuracies = get_accuracies(FILE_NAME)
     parameters = {
-        "max_depth": list(range(7, 10)),
-        "learning_rate": [0.333],
+        "max_depth": list(range(5, 10)),
+        "learning_rate": [0.277, 0.3, 0.333, 0.4, 0.5],
         "subsample": [1.0],
         "colsample_bytree": [1.0],
         "colsample_bylevel": [1.0],
-        "n_estimators": [100, 200, 300, 500, 750, 1000, 1500, 2000]
+        "n_estimators": [100, 200, 300, 500, 1000]
     }
     keys = sorted(parameters.keys())
     params = {
@@ -357,10 +357,10 @@ dirs2 = [
 
 
 finetune_xgboost(
-        TRAIN_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/CC_200_features/train/data_2800.csv",
-        TEST_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/CC_200_features/validation/data_2800.csv",
+        TRAIN_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/MLO_200_features/train/data_2800.csv",
+        TEST_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/MLO_200_features/validation/data_2800.csv",
         features_range=list(range(1, 201)),
-        FILE_NAME=r"/Users/anksss3d/datasets/breast-cesm/CALC/CC_200_features/finetune.csv",
+        FILE_NAME=r"/Users/anksss3d/datasets/breast-cesm/MASS/MLO_200_features/finetune.csv",
         classes={
             "benign": 0,
             "malignant": 1,
