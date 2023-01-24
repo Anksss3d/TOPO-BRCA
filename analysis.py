@@ -169,6 +169,16 @@ def plot_curve(FILE_PATH, class_names, confidence=40, curve=CURVE_RGB):
     plt.show()
 
 def plot_single_curve(data_dir, features_range, class_names, confidence, classes_to_include = None, file_name = None):
+    '''
+    A function yon plot a single curve for the input data.
+    :param data_dir: Data files directory
+    :param features_range: Feratures to be used for the plot
+    :param class_names: Class names with respect to their indices
+    :param confidence: Confidence band value.
+    :param classes_to_include: List of classes included in the plot
+    :param file_name: Image file name if you want to save the plot instead of showing it.
+    :return: None
+    '''
     df = pd.DataFrame(pd.read_csv(data_dir+"data_2800.csv", header=None))
     last_ind = df.shape[1]-1
     df = df.iloc[:, features_range+[last_ind]]
@@ -179,7 +189,6 @@ def plot_single_curve(data_dir, features_range, class_names, confidence, classes
 
     for i in classes_to_include:
         class_data = df[df.iloc[:, -1] == i]
-        # print(class_data.columns)
         n = len(class_data)
         cnf = int((confidence / 200) * n)
         median = []
@@ -204,33 +213,27 @@ def plot_single_curve(data_dir, features_range, class_names, confidence, classes
     plt.clf()
 
 
-def plot_scatter_plot(data_dir, features, class_names, confidence, classes_to_include = None, file_name = None):
+def plot_scatter_plot(data_dir, features, class_names, classes_to_include = None, file_name = None):
+    '''
+    A function to plot a scatter plot with one feature on X axis and other on Y axis.
+    :param data_dir: Data files directory
+    :param features: Two features in an array to be used for plot e.g. [30, 40]
+    :param class_names: Class names with respect to their indices
+    :param classes_to_include: List of classes included in the plot
+    :param file_name: Image file name if you want to save the plot instead of showing it.
+    :return:
+    '''
     df = pd.DataFrame(pd.read_csv(data_dir+"data_2800.csv", header=None))
     last_ind = df.shape[1]-1
     df = df.iloc[:, features+[last_ind]]
     df.columns = [i for i in range(df.shape[1])]
 
-    # X = [i for i in range(100)]
     colors = ["green", "red", "blue", "black", "yellow"]
 
     for i in classes_to_include:
         class_data = df[df.iloc[:, -1] == i]
-        # print(class_data.columns)
         X = class_data.iloc[:, 0]
         Y = class_data.iloc[:, 1]
-
-        # n = len(class_data)
-        # cnf = int((confidence / 200) * n)
-        # median = []
-        # lower = []
-        # upper = []
-        # for p in range(class_data.shape[1]-1):
-        #     values = sorted(class_data.iloc[:, p])
-        #     # print(p, len(values))
-        #     median.append(values[n // 2])
-        #     lower.append(values[n // 2 - cnf])
-        #     upper.append(values[n // 2 + cnf])
-        # clrs = [colors[i] for _ in range(len(X))]
         plt.scatter(X, Y, c=colors[i], label=class_names[i])
     plt.legend()
     plt.tight_layout()
@@ -242,67 +245,30 @@ def plot_scatter_plot(data_dir, features, class_names, confidence, classes_to_in
     plt.clf()
 
 
-Bettis = {
-    "Betti-0": list(range(1, 101)),
-    "Betti-1": list(range(101, 201)),
-}
-cls = {
-    "3-Class": [0, 1, 2],
-    "B vs M": [0, 1],
-    "M vs N": [1, 2],
-    "B vs N": [0, 2],
-}
-dirs = [
-    "MASS",
-    "CALC",
-]
-
-dirs2 = [
-    "CC",
-    "MLO"
-]
-
-# for betti_name, betti_value in Bettis.items():
-#     for dir1 in dirs:
-#         for dir2 in dirs2:
-#             file_name = f"{betti_name} Curve for {dir1}, {dir2}.jpg"
-#             plot_single_curve(
-#                 data_dir=f"/Users/anksss3d/datasets/breast-cesm/{dir1}/{dir2}_200_features/train/",
-#                 features_range=betti_value,
-#                 class_names=[
-#                     "Benign",
-#                     "Malignant",
-#                 ],
-#                 classes_to_include=[0, 1],
-#                 confidence=40,
-#                 file_name = file_name
-#             )
-
 # Example Call to the betti curve plot function
-classes = {
-    "All": [0, 1, 2],
-    "N vs B": [0, 1],
-    "B vs M": [1, 2],
-    "N vs M": [0, 2],
-}
-features_ = [
-    [10, 40],
-    [10, 50],
-    [30, 60],
-    [25, 75],
-    [5, 50]
-]
-for features in features_:
-    for name, cls in classes.items():
-        plot_scatter_plot(
-            data_dir=r"/Users/anksss3d/datasets/ultrasound/",
-            features=features,
-            class_names=[
-                "Normal",
-                "Benign",
-                "Malignant"
-            ],
-            classes_to_include=cls,
-            confidence=40,
-            file_name = f"ScatterPlots/({str(features)[1:-1]}) ({name}) Ultrasound - Scatter Plot.jpg"
-        )
+# classes = {
+#     "All": [0, 1, 2],
+#     "N vs B": [0, 1],
+#     "B vs M": [1, 2],
+#     "N vs M": [0, 2],
+# }
+# features_ = [
+#     [10, 40],
+#     [10, 50],
+#     [30, 60],
+#     [25, 75],
+#     [5, 50]
+# ]
+# for features in features_:
+#     for name, cls in classes.items():
+#         plot_scatter_plot(
+#             data_dir=r"/Users/anksss3d/datasets/ultrasound/",
+#             features=features,
+#             class_names=[
+#                 "Normal",
+#                 "Benign",
+#                 "Malignant"
+#             ],
+#             classes_to_include=cls,
+#             file_name = f"ScatterPlots/({str(features)[1:-1]}) ({name}) Ultrasound - Scatter Plot.jpg"
+#         )

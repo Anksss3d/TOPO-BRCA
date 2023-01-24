@@ -1,4 +1,3 @@
-import cv2
 import os
 import shutil
 import sys
@@ -96,15 +95,6 @@ def generate_tiles(
                         betti_features_rgb = generate_betti_input_grayscale(im)
                         features = features + betti_features_rgb
 
-                        # betti_features_hsv = generate_betti_input(cv2.cvtColor(im, cv2.COLOR_BGR2HSV))
-                        # features = features + betti_features_hsv
-                        #
-                        #
-                        features = features + generate_gabor_filters_grayscale(im)
-                        # features = features + generate_gabor_filters(cv2.cvtColor(im, cv2.COLOR_BGR2HSV))
-                        #
-                        features = features + generate_lbp_features_grayscale(im)
-                        # features = features + generate_lbp_features(cv2.cvtColor(im, cv2.COLOR_BGR2HSV))
                         num_features = len(features)
                         if random_index in lst:
                             tile_name = f"{v}_{white_content}.jpg"

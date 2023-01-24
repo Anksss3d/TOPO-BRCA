@@ -1,9 +1,7 @@
-from collections import Counter
 import os
 import pandas as pd
 import sklearn
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.feature_selection import SelectFromModel
@@ -12,7 +10,7 @@ from analysis import generate_scores
 import numpy as np
 
 
-def generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=None, classes=None):
+def generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=None):
     '''
     Function to generate Train and test dataset with desired features.
     :param TRAIN_DIR: Train csv file directory
@@ -25,11 +23,6 @@ def generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=None, cl
     df_test = pd.DataFrame(pd.read_csv(TEST_DIR, header=None))
     print(f"Original Train Shape: {df_train.shape}")
     print(f"Original Test Shape: {df_test.shape}")
-    # if classes:
-    #     df_train = df_train.loc[df_train.iloc[:, -1].isin(classes)]
-    #     df_train = df_train.replace(classes, list(range(len(classes))))
-    #     df_test = df_test.loc[df_test.iloc[:, -1].isin(classes)]
-    #     df_test = df_test.replace(classes, list(range(len(classes))))
     if test_split:
         df = pd.concat([df_train, df_test], axis=0)
         x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(df.iloc[:, features_range], df.iloc[:, -1], test_size=test_split, random_state=42)
@@ -116,16 +109,6 @@ def xgboost_kfold(TRAIN_DIR, TEST_DIR, features_range, classes=None):
         y_train,
         x_test,
         y_test,
-        # kwargs={
-        #     "base_score":0.5,
-        #     "colsample_bylevel":0.5,
-        #     "colsample_bytree":0.5,
-        #     "eval_metric":"mlogloss",
-        #     "learning_rate":0.3,
-        #     "max_depth":8,
-        #     "n_estimators":300,
-        #     "subsample":0.75,
-        # },
         kwargs = {'base_score': 0.5, 'colsample_bylevel': 0.5, 'colsample_bytree': 0.5, 'eval_metric': 'mlogloss', 'learning_rate': 0.3, 'max_depth': 9, 'n_estimators': 100, 'subsample': 0.75},
         k=5
     )
@@ -225,61 +208,9 @@ def finetune_xgboost(TRAIN_DIR, TEST_DIR, features_range, FILE_NAME="finetuning.
 
                             pd.DataFrame(accuracies).to_csv(FILE_NAME)
 
-    #
-    # acc_og, acc_fs, fs_count = xg_boost_ft(x_train, y_train, x_test, y_test,
-    #                                        kwargs={"base_score": 0.5, "eval_metric": 'mlogloss', })
-    # accs = ["Breast", None, None, None, None, None, None, acc_og, acc_fs, fs_count]
-    # # print(accs)
-    # accuracies.append(accs)
-    # pd.DataFrame(accuracies).to_csv(FILE_NAME)
-    # best_acc_fs, best_acc_og = 0, 0
-    # for param, values in parameters.items():
-    #     print("Finetuning for: ", param)
-    #     for value in values[1:]:
-    #         accs = [DS_NAME]
-    #         kwargs = {
-    #             'base_score': 0.5,
-    #             'eval_metric': 'mlogloss',
-    #             # 'colsample_bylevel': 0.9,
-    #             param: value
-    #         }
-    #         for key, value in kwargs.items():
-    #             accs.append(f"{key}:{value}")
-    #
-    #         # acc_og, acc_fs, fs_count = xg_boost_ft(x_train, y_train, x_test, y_test, kwargs)
-    #         acc_og, avg_auc = xg_boost_kfold(x_train, y_train, x_test, y_test, kwargs, k=5)
-    #         # best_acc_fs = max(best_acc_fs, acc_fs)
-    #         best_acc_og = max(best_acc_og, acc_og)
-    #         accs += [acc_og, avg_auc]
-    #         print(accs, "\t Best till now: ", best_acc_og)
-    #         accuracies.append(accs)
-    #         pd.DataFrame(accuracies).to_csv(FILE_NAME)
-
     print("Finetuning Successfully completed")
     return best_acc
 
-
-def grid_search_xgboost(TRAIN_DIR, TEST_DIR, features_range,classes=None):
-    x_train, y_train, x_test, y_test = generate_train_test(TRAIN_DIR, TEST_DIR, features_range, test_split=0.001,
-                                                           classes=classes)
-    parameters = {
-        "base_score": [0.5],
-        "eval_metric": ['mlogloss'],
-        "max_depth": list(range(4, 10)),
-        "learning_rate": [0.25, 0.3, 0.333, 0.366, 0.4, 0.45, 0.5],
-        "subsample": [1.0, 0.75, 0.5],
-        "colsample_bytree": [1.0, 0.75, 0.5],
-        "colsample_bylevel": [1.0, 0.75, 0.5],
-        "n_estimators": [100, 200, 300]
-    }
-    xgb = XGBClassifier()
-    grid_search = GridSearchCV(param_grid=parameters, estimator=xgb,
-                        scoring='accuracy', cv=5, verbose=4)
-    grid_search.fit(x_train, y_train)
-
-    # Print the best parameters and lowest RMSE
-    print("Best parameters found: ", grid_search.best_params_)
-    print("Best Accuracy found: ", grid_search.best_score_)
 
 
 def generate_best_k_features_dataset(TRAIN_DIR, TEST_DIR, features_range, OUTPUT_TRAIN_DIR, OUTPUT_TEST_DIR, k=500):
@@ -325,6 +256,7 @@ dirs2 = [
     "CC",
     "MLO"
 ]
+
 # classes = [
 #     None,
 #     [0, 1],
@@ -366,4 +298,3 @@ finetune_xgboost(
             "malignant": 1,
         },
 )
-# print(a)
