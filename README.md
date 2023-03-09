@@ -1,4 +1,4 @@
-# TDA-Histopathology
+#  TOPO-BRCA
 
 This repository contains code for the Topological Data Analysis used for Breast Cancer image classification. 
 
