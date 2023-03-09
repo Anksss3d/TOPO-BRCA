@@ -241,53 +241,8 @@ def generate_best_k_features_dataset(TRAIN_DIR, TEST_DIR, features_range, OUTPUT
     train_df.to_csv(OUTPUT_TRAIN_DIR)
     test_df.to_csv(OUTPUT_TEST_DIR)
 
-features_ranges = [
-    list(range(1, 101)),
-    list(range(101, 201)),
-    # list(range(1, 201)),
-    # list(range(1, 351)),
-]
-dirs = [
-    "MASS",
-    "CALC",
-]
 
-dirs2 = [
-    "CC",
-    "MLO"
-]
-
-# classes = [
-#     None,
-#     [0, 1],
-#     [1, 2],
-#     [0, 2]
-# ]
-# answers=[]
-# answers2 = []
-# for features_range in features_ranges:
-#     a = []
-#     for clases in classes:
-#         acc = finetune_xgboost(
-#             TRAIN_DIR=r"D://Nisha/dataset1_all_data_350_features_224x224/train/data_2800.csv",
-#             TEST_DIR=r"D://Nisha/dataset1_all_data_350_features_224x224/validation/data_2800.csv",
-#             features_range=features_range,
-#             FILE_NAME=r"D://Nisha/dataset1_all_data_350_features_224x224/finetune.csv",
-#             classes=clases
-#         )
-#         answers.append(f"Feature Range: {min(features_range)}-{max(features_range)}\tClasses: {clases} \tAccuracy: {acc}")
-#         a.append(acc)
-#     answers2.append(a)
-# for answer in answers:
-#     print(answer)
-# n = np.array(answers2)
-# print(n)
-# for p in answers2:
-#     for i in p:
-#         print(i, end=" ")
-#     print("")
-
-
+# Example call to the fine-tune function
 finetune_xgboost(
         TRAIN_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/MLO_200_features/train/data_2800.csv",
         TEST_DIR=r"/Users/anksss3d/datasets/breast-cesm/MASS/MLO_200_features/validation/data_2800.csv",
