@@ -11,7 +11,7 @@ This file contains code for curves shown in the paper. Also it contains the code
 This file contains code for generating tiles and all the features for the tiles. 
 
 ## feature_extraction.py
-This file contains functions for extracting different features (Betti, LBP, Gabor)
+This file contains functions for extracting different features (Betti-0, Betti-1)
 
 ## machine_learning
 This file contains code for all machine learning related tasks (Simple training, 5 Fold CV, Train:Test Split, Random Forest, XGBoost, etc.)
