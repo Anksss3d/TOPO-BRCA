@@ -245,30 +245,3 @@ def plot_scatter_plot(data_dir, features, class_names, classes_to_include = None
     plt.clf()
 
 
-# Example Call to the betti curve plot function
-# classes = {
-#     "All": [0, 1, 2],
-#     "N vs B": [0, 1],
-#     "B vs M": [1, 2],
-#     "N vs M": [0, 2],
-# }
-# features_ = [
-#     [10, 40],
-#     [10, 50],
-#     [30, 60],
-#     [25, 75],
-#     [5, 50]
-# ]
-# for features in features_:
-#     for name, cls in classes.items():
-#         plot_scatter_plot(
-#             data_dir=r"/Users/anksss3d/datasets/ultrasound/",
-#             features=features,
-#             class_names=[
-#                 "Normal",
-#                 "Benign",
-#                 "Malignant"
-#             ],
-#             classes_to_include=cls,
-#             file_name = f"ScatterPlots/({str(features)[1:-1]}) ({name}) Ultrasound - Scatter Plot.jpg"
-#         )
